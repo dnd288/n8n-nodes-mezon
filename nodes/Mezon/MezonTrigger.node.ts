@@ -1,5 +1,5 @@
 import { MezonClient } from 'mezon-sdk';
-import { IDataObject, INodeType, INodeTypeDescription, ITriggerFunctions, ITriggerResponse } from 'n8n-workflow';
+import { IDataObject, INodeType, INodeTypeDescription, ITriggerFunctions, ITriggerResponse, NodeConnectionType } from 'n8n-workflow';
 import { MezonCredentials } from './types';
 
 export class MezonTrigger implements INodeType {
@@ -40,7 +40,7 @@ export class MezonTrigger implements INodeType {
 			},
 		],
 		inputs: [],
-		outputs: []
+		outputs: [NodeConnectionType.Main]
 	};
 
 	async trigger(this: ITriggerFunctions): Promise<ITriggerResponse> {
