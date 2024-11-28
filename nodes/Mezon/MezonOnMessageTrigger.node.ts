@@ -108,7 +108,6 @@ export class MezonOnMessageTrigger implements INodeType {
 		// the workflow gets deactivated and can so clean up.
 		const closeFunction = async () => {
 			client.closeSocket();
-			client = new MezonClient();
 		};
 
 		return {
