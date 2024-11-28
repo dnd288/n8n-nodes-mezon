@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-mezon",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "n8n nodes for Mezon.ai",
   "keywords": [
     "n8n-community-node-package",
@@ -36,7 +36,7 @@
     ],
     "nodes": [
       "dist/nodes/Mezon/MezonSendMessage.node.js",
-      "dist/nodes/Mezon/MezonTrigger.node.js"
+      "dist/nodes/Mezon/MezonOnMessageTrigger.node.js"
     ]
   },
   "devDependencies": {
