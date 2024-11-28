@@ -96,7 +96,7 @@ export class MezonSendMessage implements INodeType {
 					has_attachment: false,
 				}
 			}
-			client.sendMessage(
+			await client.sendMessage(
 				this.getNodeParameter('clanId', i, '') as string,
 				this.getNodeParameter('channelId', i, '') as string,
 				this.getNodeParameter('mode', i, 2) as number,
@@ -116,7 +116,7 @@ export class MezonSendMessage implements INodeType {
 		const returnData: INodeExecutionData[][] = [];
 
 		returnData.push(returnItem);
-
+		client.closeSocket();
 		return returnData;
 	}
 }
