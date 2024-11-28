@@ -9,7 +9,7 @@ export class MezonSendMessage implements INodeType {
 		icon: 'file:mezon.svg',
 		group: ['action'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '',
 		description: 'Send message to Mezon',
 		defaults: {
 			name: 'Mezon',
@@ -33,13 +33,13 @@ export class MezonSendMessage implements INodeType {
 		 */
 		properties: [
 			{
-				displayName: 'ClanId',
+				displayName: 'Clan ID',
 				name: 'clanId',
 				type: 'string',
 				default: '',
 			},
 			{
-				displayName: 'ChannelId',
+				displayName: 'Channel ID',
 				name: 'channelId',
 				type: 'string',
 				default: '',
@@ -55,6 +55,12 @@ export class MezonSendMessage implements INodeType {
 				name: 'content',
 				type: 'string',
 				default: '',
+			},
+			{
+				displayName: 'Is Public',
+				name: 'isPublic',
+				type: 'boolean',
+				default: true,
 			},
 			{
 				displayName: 'Reference',
@@ -96,11 +102,11 @@ export class MezonSendMessage implements INodeType {
 					has_attachment: false,
 				}
 			}
-			client.sendMessage(
+			await client.sendMessage(
 				this.getNodeParameter('clanId', i, '') as string,
 				this.getNodeParameter('channelId', i, '') as string,
 				this.getNodeParameter('mode', i, 2) as number,
-				true,
+				this.getNodeParameter('isPublic', i, true) as boolean,
 				{ t: this.getNodeParameter('content', i, '') as string, },
 				[],
 				[],
@@ -116,7 +122,7 @@ export class MezonSendMessage implements INodeType {
 		const returnData: INodeExecutionData[][] = [];
 
 		returnData.push(returnItem);
-
+		client.closeSocket();
 		return returnData;
 	}
 }

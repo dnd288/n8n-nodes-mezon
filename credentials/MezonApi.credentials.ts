@@ -9,6 +9,12 @@ export class MezonApi implements ICredentialType {
 	documentationUrl = 'https://developers.mezon.ai';
 	properties: INodeProperties[] = [
 		{
+			displayName: 'AppId',
+			name: 'appId',
+			type: 'string',
+			default: '',
+		},
+		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			type: 'string',

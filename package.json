@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-mezon",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "n8n nodes for Mezon.ai",
   "keywords": [
     "n8n-community-node-package",
@@ -32,11 +32,11 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-        "dist/credentials/MezonApi.credentials.js"
+      "dist/credentials/MezonApi.credentials.js"
     ],
     "nodes": [
-        "dist/nodes/Mezon/MezonSendMessage.node.js",
-        "dist/nodes/Mezon/MezonTrigger.node.js"
+      "dist/nodes/Mezon/MezonSendMessage.node.js",
+      "dist/nodes/Mezon/MezonOnMessageTrigger.node.js"
     ]
 },
   "devDependencies": {
@@ -51,6 +51,7 @@
     "n8n-workflow": "*"
   },
   "dependencies": {
-    "mezon-sdk": "^2.7.68"
+    "mezon-sdk": "^2.7.70",
+    "node-ipc": "^12.0.0"
   }
 }
