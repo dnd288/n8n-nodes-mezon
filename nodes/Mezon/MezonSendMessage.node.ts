@@ -102,12 +102,16 @@ export class MezonSendMessage implements INodeType {
 					has_attachment: false,
 				}
 			}
+			var content = this.getNodeParameter('content', i, '') as string;
+			if (content.length > 4096) {
+				content = content.substring(0, 4095);
+			}
 			await client.sendMessage(
 				this.getNodeParameter('clanId', i, '') as string,
 				this.getNodeParameter('channelId', i, '') as string,
 				this.getNodeParameter('mode', i, 2) as number,
 				this.getNodeParameter('isPublic', i, true) as boolean,
-				{ t: this.getNodeParameter('content', i, '') as string, },
+				{ t: content, },
 				[],
 				[],
 				[
