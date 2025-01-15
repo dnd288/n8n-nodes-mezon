@@ -126,6 +126,7 @@ export class MezonSendMessage implements INodeType {
 		const returnData: INodeExecutionData[][] = [];
 
 		returnData.push(returnItem);
+		console.log("n8n-nodes-mezon: Send Message success, disconnect the client");
 		client.closeSocket();
 		return returnData;
 	}
