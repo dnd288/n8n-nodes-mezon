@@ -1,4 +1,4 @@
-import { MezonClient } from 'mezon-sdk';
+import { Events, MezonClient } from 'mezon-sdk';
 import { IDataObject, INodeType, INodeTypeDescription, ITriggerFunctions, ITriggerResponse, NodeConnectionType } from 'n8n-workflow';
 import { MezonCredentials } from './types';
 
@@ -81,12 +81,14 @@ export class MezonOnMessageTrigger implements INodeType {
 		var senderName = this.getNodeParameter('senderName') as string;
 		var clanId = this.getNodeParameter('clanId') as string;
 		var channelId = this.getNodeParameter('channelId') as string;
-  	client.on("channel_message", (event: any) => {
+  	client.on(Events.ChannelMessage, (event: any) => {
 			if (event.sender_id == credential.appId) {
 				// Ignore my message
 				return;
 			}
-			if (mentionedUserId != '' && !event.mentions.some((s: any) => s.user_id == mentionedUserId)) {
+			if (mentionedUserId !== '' &&
+				Array.isArray(event.mentions) &&
+				!event.mentions.some((s: any) => s.user_id == mentionedUserId)) {
 				return;
 			}
 			if (senderId != '' && event.sender_id != senderId) {
@@ -107,6 +109,7 @@ export class MezonOnMessageTrigger implements INodeType {
 		// The "closeFunction" function gets called by n8n whenever
 		// the workflow gets deactivated and can so clean up.
 		const closeFunction = async () => {
+			console.log("n8n-nodes-mezon: closeFunction triggered");
 			client.closeSocket();
 		};
 
