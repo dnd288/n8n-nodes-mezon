@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-send-message-advance.mezon",
+	"node": "n8n-nodes-mezon-bot.mezon",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Development", "Developer Tools"],

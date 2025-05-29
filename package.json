@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-mezon",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "description": "n8n nodes for Mezon.ai",
   "keywords": [
     "n8n-community-node-package",
@@ -36,11 +36,11 @@
     ],
     "nodes": [
       "dist/nodes/Mezon/MezonSendMessage.node.js",
-      "dist/nodes/Mezon/MezonSendMessageAdvance.node.js",
-      "dist/nodes/Mezon/MezonOnMessageTrigger.node.js"
+      "dist/nodes/Mezon/MezonBotReplyTrigger.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node-ipc": "^9.2.3",
     "@typescript-eslint/parser": "~5.45",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "gulp": "^4.0.2",
@@ -52,7 +52,7 @@
     "n8n-workflow": "*"
   },
   "dependencies": {
-    "mezon-sdk": "^2.7.83",
+    "mezon-sdk": "^2.7.97",
     "node-ipc": "^12.0.0"
   }
 }

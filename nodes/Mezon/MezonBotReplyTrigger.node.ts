@@ -1,16 +1,16 @@
-import { Events, MezonClient } from 'mezon-sdk';
-import { IDataObject, INodeType, INodeTypeDescription, ITriggerFunctions, ITriggerResponse, NodeConnectionType } from 'n8n-workflow';
+import { MezonClient } from 'mezon-sdk';
+import { INodeType, INodeTypeDescription, ITriggerFunctions, ITriggerResponse, NodeConnectionType } from 'n8n-workflow';
 import { MezonCredentials } from './types';
 
-export class MezonOnMessageTrigger implements INodeType {
+export class MezonBotReplyTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Mezon On Message Trigger',
-		name: 'mezonOnMessageTrigger',
+		displayName: 'Mezon Bot Reply Trigger',
+		name: 'mezonBotReplyTrigger',
 		icon: 'file:mezon.svg',
 		group: ['trigger'],
 		version: 1,
 		subtitle: '',
-		description: 'Interact with Mezon API',
+		description: 'Interact with Mezon Bot',
 		defaults: {
 			name: 'Mezon',
 		},
@@ -33,35 +33,36 @@ export class MezonOnMessageTrigger implements INodeType {
 		 */
 		properties: [
 			{
-				displayName: 'Mentioned User ID',
-				name: 'mentionedUserId',
+				displayName: 'Bot Logic URL',
+				name: 'botLogicUrl',
 				type: 'string',
 				default: '',
+				required: true,
 			},
 			{
-				displayName: 'Sender ID',
+				displayName: 'On Mentioned Only',
+				name: 'onMentionedOnly',
+				type: 'boolean',
+				default: true,
+			},
+			{
+				displayName: 'From Sender ID',
 				name: 'senderId',
 				type: 'string',
 				default: '',
 			},
 			{
-				displayName: 'Sender Name',
-				name: 'senderName',
-				type: 'string',
-				default: '',
-			},
-			{
-				displayName: 'Clan ID',
+				displayName: 'In Clan ID',
 				name: 'clanId',
 				type: 'string',
 				default: '',
 			},
 			{
-				displayName: 'Channel ID',
+				displayName: 'In Channel ID',
 				name: 'channelId',
 				type: 'string',
 				default: '',
-			},
+			}
 		],
 		inputs: [],
 		outputs: [NodeConnectionType.Main]
@@ -69,32 +70,20 @@ export class MezonOnMessageTrigger implements INodeType {
 
 	async trigger(this: ITriggerFunctions): Promise<ITriggerResponse> {
 		let credential = await this.getCredentials<MezonCredentials>('mezonApi');
-		var client = new MezonClient(
-			credential.apiKey,
-			credential.host,
-			credential.port,
-			true
-		);
-		await client.authenticate();
-		var mentionedUserId = this.getNodeParameter('mentionedUserId') as string;
+		var client = new MezonClient(credential.apiKey);
+		await client.login();
+		var onMentionedOnly = this.getNodeParameter('onMentionedOnly') as boolean;
 		var senderId = this.getNodeParameter('senderId') as string;
-		var senderName = this.getNodeParameter('senderName') as string;
 		var clanId = this.getNodeParameter('clanId') as string;
 		var channelId = this.getNodeParameter('channelId') as string;
-  	client.on(Events.ChannelMessage, (event: any) => {
+		var botLogicUrl = this.getNodeParameter('botLogicUrl') as string;
+
+		client.onChannelMessage(async (event) => {
 			if (event.sender_id == credential.appId) {
 				// Ignore my message
 				return;
 			}
-			if (mentionedUserId !== '' &&
-				Array.isArray(event.mentions) &&
-				!event.mentions.some((s: any) => s.user_id == mentionedUserId)) {
-				return;
-			}
 			if (senderId != '' && event.sender_id != senderId) {
-				return;
-			}
-			if (senderName != '' && event.username != senderName) {
 				return;
 			}
 			if (clanId != '' && event.clan_id != clanId) {
@@ -103,8 +92,26 @@ export class MezonOnMessageTrigger implements INodeType {
 			if (channelId != '' && event.channel_id != channelId) {
 				return;
 			}
-			this.emit([[{json: event as IDataObject}]]);
-		});
+			if (onMentionedOnly && !event?.mentions?.find((mention) => mention.user_id === credential.appId)) {
+				return;
+			}
+			const channelFetch = await client.channels.fetch(event.channel_id)
+			if (!event.message_id) {
+				console.warn("event.message_id is undefined, skipping message fetch.");
+				return;
+			}
+			const messageFetch = await channelFetch.messages.fetch(event.message_id);
+			// call to URL and get response
+			const response = await fetch(botLogicUrl, {
+				method: "POST",
+				headers: {
+					"n8n-auth": credential.apiKey ?? "",
+				},
+				body: JSON.stringify(event),
+			});
+			const content = await response.json() as any;
+			messageFetch.reply(content);
+  	})
 
 		// The "closeFunction" function gets called by n8n whenever
 		// the workflow gets deactivated and can so clean up.
