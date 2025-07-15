@@ -1,6 +1,6 @@
 import { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription, NodeConnectionType } from 'n8n-workflow';
 import { MezonCredentials } from './types';
-import { ChannelMessageContent, MezonClient } from 'mezon-sdk';
+import { MezonClient } from 'mezon-sdk';
 
 export class MezonSendMessage implements INodeType {
 	description: INodeTypeDescription = {
@@ -53,19 +53,21 @@ export class MezonSendMessage implements INodeType {
 		let credential = await this.getCredentials<MezonCredentials>('mezonApi');
 		var client = new MezonClient(credential.apiKey);
 		await client.login();
+		console.log(`n8n-nodes-mezon: Send Message trigger: Bot ${credential.appId} started`);
 		try {
 			for (let i = 0; i < this.getInputData().length; i++) {
 				const channelId = this.getNodeParameter('channelId', i) as string;
 				const content = this.getNodeParameter('content', i) as string;
 
-				const messageContent: ChannelMessageContent = {
-					t: content,
-				};
-
-				(await client.channels.fetch(channelId)).send(messageContent);
+				const channel = await client.channels.fetch(channelId);
+				if (!channel) {
+					console.log(`Channel with ID ${channelId} not found.`);
+				}
+				await channel.send({ t: content});
+				console.log(`Send message to channel ${channelId}`);
 			}
 		} catch (error) {
-			console.error('Error sending message:', error);
+			console.log('Error sending message:', error);
 		} finally {
 			console.log('MezonSendMessage: closing client socket');
 			client.closeSocket();
