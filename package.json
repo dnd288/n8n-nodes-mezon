@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "eslint": "^9.31.0",
-    "mezon-sdk": "^2.7.99",
+    "mezon-sdk": "^2.8.20",
     "node-ipc": "^12.0.0"
   }
 }

@@ -69,15 +69,15 @@ export class MezonBotReplyTrigger implements INodeType {
 	};
 
 	async trigger(this: ITriggerFunctions): Promise<ITriggerResponse> {
-		let credential = await this.getCredentials<MezonCredentials>('mezonApi');
-		var client = new MezonClient(credential.apiKey);
+		const credential = await this.getCredentials<MezonCredentials>('mezonApi');
+		const client = new MezonClient({ botId: credential.appId, token: credential.apiKey });
 		await client.login();
 		console.log(`n8n-nodes-mezon: Bot ${credential.appId} started`);
-		var onMentionedOnly = this.getNodeParameter('onMentionedOnly') as boolean;
-		var senderId = this.getNodeParameter('senderId') as string;
-		var clanId = this.getNodeParameter('clanId') as string;
-		var channelId = this.getNodeParameter('channelId') as string;
-		var botLogicUrl = this.getNodeParameter('botLogicUrl') as string;
+		const onMentionedOnly = this.getNodeParameter('onMentionedOnly') as boolean;
+		const senderId = this.getNodeParameter('senderId') as string;
+		const clanId = this.getNodeParameter('clanId') as string;
+		const channelId = this.getNodeParameter('channelId') as string;
+		const botLogicUrl = this.getNodeParameter('botLogicUrl') as string;
 
 		client.onChannelMessage(async (event) => {
 			if (event.sender_id == credential.appId) {

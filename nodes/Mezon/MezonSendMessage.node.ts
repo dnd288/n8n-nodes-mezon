@@ -50,8 +50,8 @@ export class MezonSendMessage implements INodeType {
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		let credential = await this.getCredentials<MezonCredentials>('mezonApi');
-		var client = new MezonClient(credential.apiKey);
+		const credential = await this.getCredentials<MezonCredentials>('mezonApi');
+		var client = new MezonClient({ botId: credential.appId, token: credential.apiKey });
 		await client.login();
 		console.log(`n8n-nodes-mezon: Send Message trigger: Bot ${credential.appId} started`);
 		try {
