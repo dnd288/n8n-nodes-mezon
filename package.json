@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-mezon",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "n8n nodes for Mezon.ai",
   "keywords": [
     "n8n-community-node-package",
@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "eslint": "^9.31.0",
-    "mezon-sdk": "^2.8.20",
+    "mezon-sdk": "^2.8.22",
     "node-ipc": "^12.0.0"
   }
 }
